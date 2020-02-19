@@ -15,7 +15,10 @@ namespace Qv2ray::core::connection
                 config = ConvertConfigFromVMessString(link, alias, errMessage);
             } else if (link.startsWith("ss://")) {
                 config = ConvertConfigFromSSString(link, alias, errMessage);
-            } else {
+            } else if(link.startsWith("ssr://")){
+                config = ConvertConfigFromSSRString(link, alias, errMessage);
+            }
+            else {
                 *errMessage = QObject::tr("Unsupported share link format.");
             }
 
@@ -91,7 +94,75 @@ namespace Qv2ray::core::connection
             // Some subscription providers may use plain vmess:// saperated by lines
             // But others may use base64 of above.
             auto result = QString::fromUtf8(arr).trimmed();
-            return result.startsWith("vmess://") ? result : Base64Decode(result);
+            return result.startsWith("ssr://") ? result : Base64Decode(result);
+        }
+
+
+        CONFIGROOT ConvertConfigFromSSRString(const QString &ssrBase64Uri, QString *alias, QString *errMessage)
+        {
+            ShadowSocksRServerObject server;
+            QString d_name;
+            if(ssrBase64Uri.length()<6){
+                LOG(CONNECTION, "ssr:// string too short")
+                *errMessage = QObject::tr("SSR URI is too short");
+            }
+            QRegExp regex("^(.+):([^:]+):([^:]*):([^:]+):([^:]*):([^:]+)");
+            auto data= Base64Decode(ssrBase64Uri.mid(6));
+            //bool matchSuccess = regex.exactMatch(ssrUrl);
+            for (int nTry = 0; nTry < 2; ++nTry)
+            {
+                    int param_start_pos = data.indexOf("?");
+                    if (param_start_pos > 0)
+                    {
+                            auto paramas = data.mid(param_start_pos + 1).split('&');
+                            for(auto& parama:paramas)
+                            {
+                                auto pos=parama.indexOf('=');
+                                auto key=parama.mid(0,pos);
+                                auto val=parama.mid(pos+1);
+                                if(key=="obfsparam"){
+                                    server.obfs_param=common::SaveBase64Decode(val);
+                                } else if(key=="protoparam"){
+                                    server.obfs_param=common::SaveBase64Decode(val);
+                                } else if(key=="remarks") {
+                                    server.remarks=common::SaveBase64Decode(val);
+                                    d_name=server.remarks;
+                                } else if(key=="group") {
+                                    server.group=common::SaveBase64Decode(val);
+                                }
+                            }
+                            //params_dict = ParseParam(data.mid(param_start_pos + 1));
+                            data = data.mid(0, param_start_pos);
+                    }
+                    if (data.indexOf("/") >= 0)
+                    {
+                            data = data.mid(0, data.lastIndexOf("/"));
+                    }
+
+                    auto matched = regex.exactMatch(data);
+                    auto list=regex.capturedTexts();
+                    if (matched&&list.length()==7){
+                        server.address=list[1];
+                        server.port=list[2].toInt();
+                        server.protocol=list[3].length()==0?QString("origin"):list[3];
+                        server.protocol=server.protocol.replace("_compatible","");
+                        server.method=list[4];
+                        server.obfs=list[5].length()==0?QString("plain"):list[5];
+                        server.password=common::SaveBase64Decode(list[6]);
+                        break;
+                    }
+                    *errMessage = QObject::tr("SSRUrl not matched regex \"^(.+):([^:]+):([^:]*):([^:]+):([^:]*):([^:]+)\"");
+            }
+            CONFIGROOT root;
+            OUTBOUNDS outbounds;
+            outbounds.append(GenerateOutboundEntry("shadowsocksr", GenerateShadowSocksROUT(QList<ShadowSocksRServerObject>() << server), QJsonObject()));
+            JADD(outbounds)
+            *alias = alias->isEmpty() ? d_name.isEmpty()?server.address+server.port+server.group+server.protocol+server.method+server.password:d_name : *alias + "_" + d_name;
+            *alias = alias->trimmed();
+            if(alias->isEmpty())
+                    *errMessage = QObject::tr("SSRUrl empty");
+            LOG(CONNECTION, "Deduced alias: " + *alias)
+            return root;
         }
 
         CONFIGROOT ConvertConfigFromSSString(const QString &ssUri, QString *alias, QString *errMessage)

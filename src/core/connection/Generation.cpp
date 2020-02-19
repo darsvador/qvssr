@@ -69,6 +69,21 @@ namespace Qv2ray::core::connection
             RROOT
         }
 
+        OUTBOUNDSETTING GenerateShadowSocksROUT(QList<ShadowSocksRServerObject> servers)
+        {
+            OUTBOUNDSETTING root;
+            QJsonArray x;
+
+            foreach (auto server, servers) {
+
+                OUTBOUNDSETTING root;
+                JADD(server.address, server.method, server.password,  server.protocol,server.protocol_param,server.obfs,server.obfs_param,server.remarks,server.group,server.port)
+                x.append(root);
+            }
+            root.insert("servers", x);
+            RROOT
+        }
+
         OUTBOUNDSETTING GenerateShadowSocksServerOUT(QString email, QString address, int port, QString method, QString password, bool ota, int level)
         {
             OUTBOUNDSETTING root;

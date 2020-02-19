@@ -8,7 +8,9 @@ QT += core gui widgets network
 
 TARGET = qv2ray
 TEMPLATE = app
-
+CONFIG += use_grpc
+DEFINES += QV2RAY_DEFAULT_VCORE_PATH=\\\"/usr/bin/v2ray\\\"
+DEFINES += QV2RAY_DEFAULT_VASSETS_PATH=\\\"/usr/lib/v2ray\\\"
 # Now read build number file.
 QV2RAY_VERSION=$$cat($$PWD/makespec/VERSION)
 QV2RAY_BUILD_VERSION=$$cat($$PWD/makespec/BUILDVERSION)

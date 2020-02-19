@@ -134,9 +134,9 @@ void SubscribeEditor::StartUpdateSubscription(const QString &subscriptionName)
     if (!content.isEmpty()) {
         connectionsList->clear();
         auto vmessList = SplitLines(content);
+        vmessList.removeDuplicates();
         QDir(QV2RAY_SUBSCRIPTION_DIR + subscriptionName).removeRecursively();
         QDir().mkpath(QV2RAY_SUBSCRIPTION_DIR + subscriptionName);
-
         for (auto vmess : vmessList) {
             QString errMessage;
             QString _alias;

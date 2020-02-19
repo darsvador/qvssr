@@ -18,6 +18,8 @@ namespace Qv2ray::core::connection
         // SS URI Protocol
         CONFIGROOT ConvertConfigFromSSString(const QString &ss, QString *alias, QString *errMessage);
         QString ConvertConfigToSSString(const ShadowSocksServerObject &server, const QString &alias, bool isSip002);
+
+        CONFIGROOT ConvertConfigFromSSRString(const QString &ss, QString *alias, QString *errMessage);
     }
 }
 

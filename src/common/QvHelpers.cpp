@@ -96,6 +96,12 @@ namespace Qv2ray::common
         return QString(QByteArray::fromBase64(ba));
     }
 
+    QString SaveBase64Decode(QString string)
+    {
+        QByteArray ba = string.replace(QChar('-'),QChar('+')).replace(QChar('_'),QChar('/')).toUtf8();
+        return QString(QByteArray::fromBase64(ba,QByteArray::Base64Option::OmitTrailingEquals));
+    }
+
     QStringList SplitLines(const QString &_string)
     {
         return _string.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
