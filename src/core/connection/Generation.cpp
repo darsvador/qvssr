@@ -77,7 +77,17 @@ namespace Qv2ray::core::connection
             foreach (auto server, servers) {
 
                 OUTBOUNDSETTING root;
-                JADD(server.address, server.method, server.password,  server.protocol,server.protocol_param,server.obfs,server.obfs_param,server.remarks,server.group,server.port)
+                const auto& address=server.address;
+                const auto& method=server.method;
+                const auto& password=server.password;
+                const auto& protocol=server.protocol;
+                const auto& protocol_param=server.protocol_param;
+                const auto& obfs=server.obfs;
+                const auto& obfs_param=server.obfs_param;
+                const auto& remarks=server.remarks;
+                const auto& group=server.group;
+                const auto& port=server.port;
+                JADD(address, method, password,  protocol,protocol_param,obfs,obfs_param,remarks,group,port)
                 x.append(root);
             }
             root.insert("servers", x);

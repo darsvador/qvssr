@@ -43,6 +43,12 @@ namespace Qv2ray::core
             *host = Server.address;
             *port = Server.port;
             return true;
+        } else if (*protocol == "shadowsocksr") {
+            auto x = JsonToString(out["settings"].toObject()["servers"].toArray().first().toObject());
+            auto Server = StructFromJsonString<ShadowSocksRServerObject>(x);
+            *host = Server.address;
+            *port = Server.port;
+            return true;
         } else if (*protocol == "socks") {
             auto x = JsonToString(out["settings"].toObject()["servers"].toArray().first().toObject());
             auto Server = StructFromJsonString<SocksServerObject>(x);

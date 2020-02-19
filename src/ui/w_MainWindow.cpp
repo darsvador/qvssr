@@ -974,7 +974,7 @@ void MainWindow::on_shareBtn_clicked()
     auto root = connections[_identifier].config;
     auto type = get<2>(GetConnectionInfo(root));
 
-    if (!IsComplexConfig(root) && (type == "vmess" || type == "shadowsocks")) {
+    if (!IsComplexConfig(root) && (type == "vmess" || type == "shadowsocks"|| type == "shadowsocksr")) {
         ConfigExporter v(root, _identifier, this);
         v.OpenExport();
     } else {

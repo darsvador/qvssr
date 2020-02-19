@@ -20,6 +20,7 @@ namespace Qv2ray::core::connection
         QString ConvertConfigToSSString(const ShadowSocksServerObject &server, const QString &alias, bool isSip002);
 
         CONFIGROOT ConvertConfigFromSSRString(const QString &ss, QString *alias, QString *errMessage);
+        QString ConvertConfigToSSRString(const ShadowSocksRServerObject &server);
     }
 }
 

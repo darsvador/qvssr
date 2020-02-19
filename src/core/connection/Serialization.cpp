@@ -40,6 +40,9 @@ namespace Qv2ray::core::connection
             } else if (type == "shadowsocks") {
                 auto ssServer = StructFromJsonString<ShadowSocksServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
                 sharelink = ConvertConfigToSSString(ssServer, alias, isSip002);
+            } else if (type == "shadowsocksr") {
+                auto ssServer = StructFromJsonString<ShadowSocksRServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
+                sharelink = ConvertConfigToSSRString(ssServer);
             } else {
                 LOG(CONNECTION, "Unsupported outbound type: " + type)
             }
@@ -121,14 +124,14 @@ namespace Qv2ray::core::connection
                                 auto key=parama.mid(0,pos);
                                 auto val=parama.mid(pos+1);
                                 if(key=="obfsparam"){
-                                    server.obfs_param=common::SaveBase64Decode(val);
+                                    server.obfs_param=common::SafeBase64Decode(val);
                                 } else if(key=="protoparam"){
-                                    server.obfs_param=common::SaveBase64Decode(val);
+                                    server.protocol_param=common::SafeBase64Decode(val);
                                 } else if(key=="remarks") {
-                                    server.remarks=common::SaveBase64Decode(val);
+                                    server.remarks=common::SafeBase64Decode(val);
                                     d_name=server.remarks;
                                 } else if(key=="group") {
-                                    server.group=common::SaveBase64Decode(val);
+                                    server.group=common::SafeBase64Decode(val);
                                 }
                             }
                             //params_dict = ParseParam(data.mid(param_start_pos + 1));
@@ -148,7 +151,7 @@ namespace Qv2ray::core::connection
                         server.protocol=server.protocol.replace("_compatible","");
                         server.method=list[4];
                         server.obfs=list[5].length()==0?QString("plain"):list[5];
-                        server.password=common::SaveBase64Decode(list[6]);
+                        server.password=common::SafeBase64Decode(list[6]);
                         break;
                     }
                     *errMessage = QObject::tr("SSRUrl not matched regex \"^(.+):([^:]+):([^:]*):([^:]+):([^:]*):([^:]+)\"");
@@ -271,6 +274,25 @@ namespace Qv2ray::core::connection
             }
         }
 
+        QString ConvertConfigToSSRString(const ShadowSocksRServerObject &server)
+        {
+            QString main_part = server.address + ":" + QString::number(server.port) + ":" + server.protocol + ":" + server.method + ":" + server.obfs + ":" + common::SafeBase64Encode(server.password);
+            QString param_str = "obfsparam=" + common::SafeBase64Encode(server.obfs_param);
+            if (!server.protocol_param.isEmpty())
+            {
+                param_str += "&protoparam=" + common::SafeBase64Encode(server.protocol_param);
+            }
+            if (!server.remarks.isEmpty())
+            {
+                param_str += "&remarks=" + common::SafeBase64Encode(server.remarks);
+            }
+            if (!server.group.isEmpty())
+            {
+                param_str += "&group=" + common::SafeBase64Encode(server.group);
+            }
+            QString base64 = common::SafeBase64Encode(main_part + "/?" + param_str);
+            return "ssr://" + base64;
+        }
         //
         // This generates global config containing only one outbound....
         CONFIGROOT ConvertConfigFromVMessString(const QString &vmessStr, QString *alias, QString *errMessage)
