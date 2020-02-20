@@ -44,5 +44,9 @@ message("  --> Adding http parser")
 HEADERS += $$PWD/../3rdparty/qhttpserver/http-parser/http_parser.h
 SOURCES += $$PWD/../3rdparty/qhttpserver/http-parser/http_parser.c
 INCLUDEPATH += $$PWD/../3rdparty/qhttpserver/http-parser/
+message("  --> ssr-libev")
+DEFINES += LIB_ONLY
+DEFINES += MODULE_LOCAL
+include($$PWD/../3rdparty/ssr-libev/ssr-libev.pri)
 
 

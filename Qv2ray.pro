@@ -9,6 +9,7 @@ QT += core gui widgets network
 TARGET = qv2ray
 TEMPLATE = app
 CONFIG += use_grpc
+CONFIG += object_parallel_to_source
 DEFINES += QV2RAY_DEFAULT_VCORE_PATH=\\\"/usr/bin/v2ray\\\"
 DEFINES += QV2RAY_DEFAULT_VASSETS_PATH=\\\"/usr/lib/v2ray\\\"
 # Now read build number file.
@@ -119,6 +120,7 @@ RC_ICONS += $$PWD/assets/icons/qv2ray.ico
 include($$PWD/makespec/02-translations.pri)
 
 unix {
+    LIBS += -lssl -lcrypto -lpcre
     include($$PWD/makespec/03-unix.pri)
     # Sub-process of Qv2ray per-OS build
     !macx: include($$PWD/makespec/04-unix-linux.pri)

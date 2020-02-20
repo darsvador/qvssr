@@ -4,6 +4,7 @@
 #include "common/QvHelpers.hpp"
 #include "KernelInteractions.hpp"
 #include "core/connection/ConnectionIO.hpp"
+#include "core/CoreUtils.hpp"
 
 namespace Qv2ray::core::kernel
 {
@@ -146,6 +147,9 @@ namespace Qv2ray::core::kernel
 
         // Write the final configuration to the disk.
 
+        OUTBOUND outbound = OUTBOUND(root["outbounds"].toArray().first().toObject());
+        auto info = Qv2ray::core::GetConnectionInfo(root);
+        auto type = get<2>(info);
         QString json = JsonToString(root);
         QFile configFile(QV2RAY_GENERATED_FILE_PATH);
         StringToFile(&json, &configFile);
@@ -153,43 +157,47 @@ namespace Qv2ray::core::kernel
         auto filePath = QV2RAY_GENERATED_FILE_PATH;
 
         if (ValidateConfig(filePath)) {
-            QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-            env.insert("V2RAY_LOCATION_ASSET", GlobalConfig.v2AssetsPath);
-            vProcess->setProcessEnvironment(env);
-            vProcess->start(GlobalConfig.v2CorePath, QStringList() << "-config" << filePath, QIODevice::ReadWrite | QIODevice::Text);
-            vProcess->waitForStarted();
-            DEBUG(VCORE, "V2ray core started.")
-            KernelStarted = true;
-            QStringList inboundTags;
+            if(type=="vmess" || type=="shadowsocks"){
+                QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+                env.insert("V2RAY_LOCATION_ASSET", GlobalConfig.v2AssetsPath);
+                vProcess->setProcessEnvironment(env);
+                vProcess->start(GlobalConfig.v2CorePath, QStringList() << "-config" << filePath, QIODevice::ReadWrite | QIODevice::Text);
+                vProcess->waitForStarted();
+                DEBUG(VCORE, "V2ray core started.")
+                        KernelStarted = true;
+                QStringList inboundTags;
 
-            for (auto item : root["inbounds"].toArray()) {
-                auto tag = item.toObject()["tag"].toString("");
+                for (auto item : root["inbounds"].toArray()) {
+                    auto tag = item.toObject()["tag"].toString("");
 
-                if (tag.isEmpty() || tag == API_TAG_INBOUND) {
-                    // Ignore API tag and empty tags.
-                    continue;
+                    if (tag.isEmpty() || tag == API_TAG_INBOUND) {
+                        // Ignore API tag and empty tags.
+                        continue;
+                    }
+
+                    inboundTags.append(tag);
                 }
 
-                inboundTags.append(tag);
+                DEBUG(VCORE, "Found inbound tags: " + inboundTags.join(";"))
+                        apiEnabled = false;
+
+                //
+                if (StartupOption.noAPI) {
+                    LOG(VCORE, "API has been disabled by the command line argument \"-noAPI\"")
+                } else if (!GlobalConfig.apiConfig.enableAPI) {
+                    LOG(VCORE, "API has been disabled by the global config option")
+                } else if (inboundTags.isEmpty()) {
+                    LOG(VCORE, "API is disabled since no inbound tags configured. This is probably caused by a bad complex config.")
+                } else {
+                    apiWorker->StartAPI(inboundTags);
+                    apiEnabled = true;
+                    DEBUG(VCORE, "Qv2ray API started")
+                }
+
+                return true;
+            } else if(type=="shadowsocksr"){
+
             }
-
-            DEBUG(VCORE, "Found inbound tags: " + inboundTags.join(";"))
-            apiEnabled = false;
-
-            //
-            if (StartupOption.noAPI) {
-                LOG(VCORE, "API has been disabled by the command line argument \"-noAPI\"")
-            } else if (!GlobalConfig.apiConfig.enableAPI) {
-                LOG(VCORE, "API has been disabled by the global config option")
-            } else if (inboundTags.isEmpty()) {
-                LOG(VCORE, "API is disabled since no inbound tags configured. This is probably caused by a bad complex config.")
-            } else {
-                apiWorker->StartAPI(inboundTags);
-                apiEnabled = true;
-                DEBUG(VCORE, "Qv2ray API started")
-            }
-
-            return true;
         } else {
             KernelStarted = false;
             return false;
