@@ -19,6 +19,7 @@ HEADERS +=$$PWD/common.h\
     $$PWD/obfs/http_simple.h\
             $$PWD/cache.h\
             $$PWD/local.h\
+    $$PWD/qt_ui_log.h \
     $$PWD/speed.h \
             $$PWD/uthash.h\
             $$PWD/rule.h\
@@ -38,6 +39,7 @@ HEADERS +=$$PWD/common.h\
 
 SOURCES +=$$PWD/http.c\
         $$PWD/local.c \
+        $$PWD/qt_ui_log.cpp \
         $$PWD/tls.c\
         $$PWD/rule.c\
         $$PWD/utils.c\

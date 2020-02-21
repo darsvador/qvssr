@@ -46,13 +46,6 @@
 
 #define INT_DIGITS 19           /* enough for 64 bit integer */
 
-#ifdef LIB_ONLY
-FILE *logfile;
-#endif
-
-#ifdef HAS_SYSLOG
-int use_syslog = 0;
-#endif
 
 #ifndef __MINGW32__
 void

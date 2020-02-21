@@ -1528,7 +1528,6 @@ start_ss_local_server(profile_t profile)
     sprintf(local_port_str, "%d", local_port);
     sprintf(remote_port_str, "%d", remote_port);
 
-    USE_LOGFILE(log);
 
     if (profile.acl != NULL) {
         acl = !init_acl(profile.acl);

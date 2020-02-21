@@ -5,16 +5,28 @@
 #include "shadowsocks.h"
 namespace Qv2ray::core::kernel
 {
-
-    struct SSRThreadDeleter{
-        void operator()(QThread * thread){
-            if(threadStart) {
-            stop_ss_local_server(); thread->wait();
-            }
-            delete thread;
-        }
-        bool threadStart=false;
+    class SSRThread : public QThread
+    {
+        Q_OBJECT
+    public:
+        explicit SSRThread();
+        explicit SSRThread(int local_port,const OUTBOUND& outbound);
+        void run() override;
+        ~SSRThread() override;
+    signals:
+        void onSSRThreadLog(QString);
+    private:
+       int localPort;
+       int remotePort;
+       std::string remote_host;
+       std::string method;
+       std::string password;
+       std::string obfs;
+       std::string obfs_param;
+       std::string protocol;
+       std::string protocol_param;
     };
+
     class V2rayKernelInstance : public QObject
     {
             Q_OBJECT
@@ -47,7 +59,7 @@ namespace Qv2ray::core::kernel
             void onAPIDataReady(QString tag, long totalUp, long totalDown);
 
         private:
-            std::unique_ptr<QThread,SSRThreadDeleter> ssrThread;
+            std::unique_ptr<SSRThread> ssrThread;
             APIWorkder *apiWorker;
             QProcess *vProcess;
             bool apiEnabled;

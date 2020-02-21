@@ -7,6 +7,51 @@
 #include "core/CoreUtils.hpp"
 #include "shadowsocks.h"
 
+namespace Qv2ray::core::kernel
+{
+SSRThread::SSRThread(){}
+SSRThread::SSRThread(int local_port,const OUTBOUND& outbound):localPort(local_port){
+            auto ssrServer = StructFromJsonString<ShadowSocksRServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
+            remotePort=ssrServer.port;
+            remote_host=ssrServer.address.toStdString();
+            method=ssrServer.method.toStdString();
+            password=ssrServer.password.toStdString();
+            obfs=ssrServer.obfs.toStdString();
+            obfs_param=ssrServer.obfs_param.toStdString();
+            protocol=ssrServer.protocol.toStdString();
+            protocol_param=ssrServer.protocol_param.toStdString();
+}
+void SSRThread::run()
+{
+            profile_t profile;
+            profile.remote_host=remote_host.data();
+            profile.local_addr=NULL;
+            profile.method=method.data();
+            profile.timeout=600;
+            profile.password=password.data();
+            profile.obfs=obfs.data();
+            profile.obfs_param=obfs_param.data();
+            profile.protocol=protocol.data();
+            profile.protocol_param=protocol_param.data();
+            profile.remote_port=remotePort;
+            profile.local_port=localPort;
+            profile.mtu=0;//we don't use udp relay, therefore we set mtu to zero.
+            profile.mode=0;//we don't use udp relay, therefore we set mode to zero.
+            profile.acl=NULL;
+            profile.log=NULL;
+            profile.fast_open=1;
+            profile.mptcp=0;
+            start_ss_local_server(profile);
+}
+SSRThread::~SSRThread()
+{
+    if(isRunning())
+    {
+        stop_ss_local_server();
+        wait();
+    }
+}
+}
 
 namespace Qv2ray::core::kernel
 {
@@ -138,6 +183,7 @@ namespace Qv2ray::core::kernel
         apiWorker = new APIWorkder();
         connect(apiWorker, &APIWorkder::OnDataReady, this, &V2rayKernelInstance::onAPIDataReady);
         KernelStarted = false;
+
     }
 
     bool V2rayKernelInstance::StartConnection(CONFIGROOT root)
@@ -174,37 +220,8 @@ namespace Qv2ray::core::kernel
                 return false;
             }
             OUTBOUND outbound = OUTBOUND(root["outbounds"].toArray().first().toObject());
-            ssrThread=std::move(unique_ptr<QThread,SSRThreadDeleter>{QThread::create(
-            [outbound,local_port](){
-            profile_t profile;
-            auto ssrServer = StructFromJsonString<ShadowSocksRServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
-            auto remote_host=ssrServer.address.toStdString();
-            auto method=ssrServer.method.toStdString();
-            auto password=ssrServer.password.toStdString();
-            auto obfs=ssrServer.obfs.toStdString();
-            auto obfs_param=ssrServer.obfs_param.toStdString();
-            auto protocol=ssrServer.protocol.toStdString();
-            auto protocol_param=ssrServer.protocol_param.toStdString();
-
-            profile.remote_host=remote_host.data();
-            profile.local_addr=NULL;
-            profile.method=ssrServer.method.toStdString().data();
-            profile.timeout=600;
-            profile.password=password.data();
-            profile.obfs=obfs.data();
-            profile.obfs_param=obfs_param.data();
-            profile.protocol=protocol.data();
-            profile.protocol_param=protocol_param.data();
-            profile.remote_port=ssrServer.port;
-            profile.local_port=local_port;
-            profile.mtu=0;//we don't use udp relay, therefore we set mtu to zero.
-            profile.mode=0;//we don't use udp relay, therefore we set mode to zero.
-            profile.acl=NULL;
-            profile.log=NULL;
-            profile.fast_open=1;
-            start_ss_local_server(profile);
-            }),SSRThreadDeleter{}});
-            ssrThread.get_deleter().threadStart=true;
+            ssrThread=make_unique<SSRThread>(local_port,outbound);
+            connect(ssrThread.get(),&SSRThread::onSSRThreadLog,this,&V2rayKernelInstance::onProcessOutputReadyRead);
             ssrThread->start();
             return true;
         } else if (ValidateConfig(filePath)) {
@@ -257,10 +274,8 @@ namespace Qv2ray::core::kernel
             apiWorker->StopAPI();
             apiEnabled = false;
         }
-        if (ssrThread.get_deleter().threadStart)
         {
-            stop_ss_local_server();
-            ssrThread=std::move(decltype (ssrThread){});
+            ssrThread=make_unique<SSRThread>();
         }
         // Set this to false BEFORE close the Process, since we need this flag to capture the real kernel CRASH
         KernelStarted = false;

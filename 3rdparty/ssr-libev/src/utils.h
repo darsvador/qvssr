@@ -19,7 +19,7 @@
  * along with shadowsocks-libev; see the file COPYING. If not, see
  * <http://www.gnu.org/licenses/>.
  */
-
+#include "qt_ui_log.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,9 +73,7 @@ extern FILE *logfile;
 
 #define TIME_FORMAT "%Y-%m-%d %H:%M:%S"
 
-#define USE_TTY()
 
-#define USE_SYSLOG(ident)
 
 #define USE_LOGFILE(ident)                                     \
     do {                                                       \
@@ -87,26 +85,28 @@ extern FILE *logfile;
         if (logfile != NULL) { fclose(logfile); } } \
     while (0)
 
+
+
 #define LOGI(format, ...)                                                        \
     do {                                                                         \
-        if (logfile != NULL) {                                                   \
+         {                                                   \
             time_t now = time(NULL);                                             \
             char timestr[20];                                                    \
             strftime(timestr, 20, TIME_FORMAT, localtime(&now));                 \
-            fprintf(logfile, " %s INFO: " format "\n", timestr, ## __VA_ARGS__); \
-            fflush(logfile); }                                                   \
+            qt_ui_log_info( " %s INFO: " format , timestr, ## __VA_ARGS__); \
+             }                                                   \
     }                                                                            \
     while (0)
 
 #define LOGE(format, ...)                                        \
     do {                                                         \
-        if (logfile != NULL) {                                   \
+         {                                   \
             time_t now = time(NULL);                             \
             char timestr[20];                                    \
             strftime(timestr, 20, TIME_FORMAT, localtime(&now)); \
-            fprintf(logfile, " %s ERROR: " format "\n", timestr, \
+            qt_ui_log_error( " %s ERROR: " format , timestr, \
                     ## __VA_ARGS__);                             \
-            fflush(logfile); }                                   \
+         }                                   \
     }                                                            \
     while (0)
 
