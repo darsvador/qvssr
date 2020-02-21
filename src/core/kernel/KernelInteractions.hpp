@@ -2,9 +2,19 @@
 #include <QProcess>
 #include "base/Qv2rayBase.hpp"
 #include "APIBackend.hpp"
-
+#include "shadowsocks.h"
 namespace Qv2ray::core::kernel
 {
+
+    struct SSRThreadDeleter{
+        void operator()(QThread * thread){
+            if(threadStart) {
+            stop_ss_local_server(); thread->wait();
+            }
+            delete thread;
+        }
+        bool threadStart=false;
+    };
     class V2rayKernelInstance : public QObject
     {
             Q_OBJECT
@@ -37,6 +47,7 @@ namespace Qv2ray::core::kernel
             void onAPIDataReady(QString tag, long totalUp, long totalDown);
 
         private:
+            std::unique_ptr<QThread,SSRThreadDeleter> ssrThread;
             APIWorkder *apiWorker;
             QProcess *vProcess;
             bool apiEnabled;

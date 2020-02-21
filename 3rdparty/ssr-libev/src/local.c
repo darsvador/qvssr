@@ -114,8 +114,9 @@ char *prefix;
 static int acl       = 0;
 static int mode = TCP_ONLY;
 static int ipv6first = 0;
-
+static bool stop=false;
 static int fast_open = 0;
+static struct ev_timer* stop_watcher=NULL;
 #ifdef HAVE_SETRLIMIT
 #ifndef LIB_ONLY
 static int nofile = 0;
@@ -142,7 +143,6 @@ static void close_and_free_server(EV_P_ server_t *server);
 static remote_t *new_remote(int fd, int timeout);
 static server_t *new_server(int fd, listen_ctx_t* profile);
 
-static struct cork_dllist inactive_profiles;
 static listen_ctx_t *current_profile;
 static struct cork_dllist all_connections;
 
@@ -1475,12 +1475,31 @@ init_obfs(server_def_t *serv, char *protocol, char *protocol_param, char *obfs, 
     }
 }
 
+int
+stop_ss_local_server()
+{
+stop=true;
+}
+
+void
+stop_timer_cb(EV_P_ ev_timer *w, int revents)
+{
+    if(stop) {
+        ev_timer_stop(EV_DEFAULT,stop_watcher);
+        ev_unloop(EV_A_ EVUNLOOP_ALL);
+    } else {
+        stop_watcher->repeat=0.5;
+        ev_timer_again(EV_DEFAULT,stop_watcher);
+    }
+}
 
 int
 start_ss_local_server(profile_t profile)
 {
     srand(time(NULL));
-
+    ev_timer stop_timer;
+    stop_watcher=&stop_timer;
+    stop=false;
     char *remote_host = profile.remote_host;
     char *local_addr  = profile.local_addr;
     char *method      = profile.method;
@@ -1489,6 +1508,10 @@ start_ss_local_server(profile_t profile)
     int remote_port   = profile.remote_port;
     int local_port    = profile.local_port;
     int timeout       = profile.timeout;
+    char *obfs        = profile.obfs;           // ssr
+    char *obfs_param  = profile.obfs_param;    // ssr
+    char *protocol    = profile.protocol;       // ssr
+    char *proto_param = profile.protocol_param;// ssr
     int mtu           = 0;
     int mptcp         = 0;
 
@@ -1543,21 +1566,27 @@ start_ss_local_server(profile_t profile)
 
     // Setup proxy context
     struct ev_loop *loop = EV_DEFAULT;
-
-    listen_ctx_t listen_ctx;
-    listen_ctx.server_num     = 1;
-    server_def_t *serv = &listen_ctx.servers[0];
+    listen_ctx_t *listen_ctx = (listen_ctx_t *)ss_malloc(sizeof(listen_ctx_t));
+    memset(listen_ctx, 0, sizeof(listen_ctx_t));
+    current_profile=listen_ctx;
+    listen_ctx->server_num     = 1;
+    server_def_t *serv = &listen_ctx->servers[0];
+    serv->host=ss_strdup(remote_host);
+    serv->port=remote_port;
+    serv->psw=ss_strdup(password);
     ss_server_t server_cfg;
     ss_server_t *serv_cfg = &server_cfg;
-    server_cfg.protocol = 0;
-    server_cfg.protocol_param = 0;
-    server_cfg.obfs = 0;
-    server_cfg.obfs_param = 0;
+    server_cfg.protocol = protocol;
+    server_cfg.protocol_param = proto_param;
+    server_cfg.obfs = obfs;
+    server_cfg.obfs_param = obfs_param;
+    serv->enable=1;
+    cork_dllist_init(&listen_ctx->connections_eden);
     serv->addr = serv->addr_udp = storage;
     serv->addr_len = serv->addr_udp_len = get_sockaddr_len((struct sockaddr *) storage);
-    listen_ctx.timeout        = timeout;
-    listen_ctx.iface          = NULL;
-    listen_ctx.mptcp          = mptcp;
+    listen_ctx->timeout        = timeout;
+    listen_ctx->iface          = NULL;
+    listen_ctx->mptcp          = mptcp;
 
     if (mode != UDP_ONLY) {
         // Setup socket
@@ -1573,17 +1602,18 @@ start_ss_local_server(profile_t profile)
         }
         setnonblocking(listenfd);
 
-        listen_ctx.fd = listenfd;
-
-        ev_io_init(&listen_ctx.io, accept_cb, listenfd, EV_READ);
-        ev_io_start(loop, &listen_ctx.io);
+        listen_ctx->fd = listenfd;
+        ev_timer_init(stop_watcher,stop_timer_cb,0.5,0);
+        ev_timer_start(loop,stop_watcher);
+        ev_io_init(&listen_ctx->io, accept_cb, listenfd, EV_READ);
+        ev_io_start(loop, &listen_ctx->io);
     }
 
     // Setup UDP
     if (mode != TCP_ONLY) {
         LOGI("udprelay enabled");
-        init_udprelay(local_addr, local_port_str, (struct sockaddr*)listen_ctx.servers[0].addr_udp,
-                      listen_ctx.servers[0].addr_udp_len, tunnel_addr, mtu, listen_ctx.timeout, listen_ctx.iface, &listen_ctx.servers[0].cipher, listen_ctx.servers[0].protocol_name, listen_ctx.servers[0].protocol_param);
+        init_udprelay(local_addr, local_port_str, (struct sockaddr*)listen_ctx->servers[0].addr_udp,
+                      listen_ctx->servers[0].addr_udp_len, tunnel_addr, mtu, listen_ctx->timeout, listen_ctx->iface, &listen_ctx->servers[0].cipher, listen_ctx->servers[0].protocol_name, listen_ctx->servers[0].protocol_param);
     }
 
     if (strcmp(local_addr, ":") > 0)
@@ -1600,8 +1630,8 @@ start_ss_local_server(profile_t profile)
 
     // Init connections
     cork_dllist_init(&serv->connections);
+    cork_dllist_init(&all_connections);
 
-    cork_dllist_init(&inactive_profiles); //
 
     // Enter the loop
     ev_run(loop, 0);
@@ -1616,9 +1646,10 @@ start_ss_local_server(profile_t profile)
     }
 
     if (mode != UDP_ONLY) {
-        ev_io_stop(loop, &listen_ctx.io);
+        ev_io_stop(loop, &listen_ctx->io);
         free_connections(loop);
-        close(listen_ctx.fd);
+        close(listen_ctx->fd);
+        release_profile(current_profile);
     }
 
     ss_free(serv->addr);

@@ -31,7 +31,10 @@ typedef struct {
     int remote_port;      // port number of remote server
     int local_port;       // port number of local server
     int timeout;          // connection timeout
-
+    char *obfs;           // ssr
+    char *obfs_param;     // ssr
+    char *protocol;       // ssr
+    char *protocol_param; // ssr
     /*  Optional, set NULL if not valid   */
     char *acl;            // file path to acl
     char *log;            // file path to log
@@ -77,6 +80,7 @@ extern "C" {
  */
 int start_ss_local_server(profile_t profile);
 
+int stop_ss_local_server();
 #ifdef __cplusplus
 }
 #endif

@@ -5,6 +5,8 @@
 #include "KernelInteractions.hpp"
 #include "core/connection/ConnectionIO.hpp"
 #include "core/CoreUtils.hpp"
+#include "shadowsocks.h"
+
 
 namespace Qv2ray::core::kernel
 {
@@ -147,7 +149,6 @@ namespace Qv2ray::core::kernel
 
         // Write the final configuration to the disk.
 
-        OUTBOUND outbound = OUTBOUND(root["outbounds"].toArray().first().toObject());
         auto info = Qv2ray::core::GetConnectionInfo(root);
         auto type = get<2>(info);
         QString json = JsonToString(root);
@@ -156,8 +157,57 @@ namespace Qv2ray::core::kernel
         //
         auto filePath = QV2RAY_GENERATED_FILE_PATH;
 
-        if (ValidateConfig(filePath)) {
-            if(type=="vmess" || type=="shadowsocks"){
+        if(type=="shadowsocksr"){
+            int local_port=0;
+            for(const auto& item:root["inbounds"].toArray())
+            {
+                if(item.toObject()["protocol"].toString(QObject::tr("N/A"))=="socks")
+                {
+                    local_port = item.toObject()["port"].toInt(0);
+                    break;
+                }
+            }
+            if(local_port==0)
+            {
+                QvMessageBoxWarn(nullptr, tr("Cannot start Shadowsocksr"),
+                                 tr("socks settings is incorrect or not enabled.") );
+                return false;
+            }
+            OUTBOUND outbound = OUTBOUND(root["outbounds"].toArray().first().toObject());
+            ssrThread=std::move(unique_ptr<QThread,SSRThreadDeleter>{QThread::create(
+            [outbound,local_port](){
+            profile_t profile;
+            auto ssrServer = StructFromJsonString<ShadowSocksRServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
+            auto remote_host=ssrServer.address.toStdString();
+            auto method=ssrServer.method.toStdString();
+            auto password=ssrServer.password.toStdString();
+            auto obfs=ssrServer.obfs.toStdString();
+            auto obfs_param=ssrServer.obfs_param.toStdString();
+            auto protocol=ssrServer.protocol.toStdString();
+            auto protocol_param=ssrServer.protocol_param.toStdString();
+
+            profile.remote_host=remote_host.data();
+            profile.local_addr=NULL;
+            profile.method=ssrServer.method.toStdString().data();
+            profile.timeout=600;
+            profile.password=password.data();
+            profile.obfs=obfs.data();
+            profile.obfs_param=obfs_param.data();
+            profile.protocol=protocol.data();
+            profile.protocol_param=protocol_param.data();
+            profile.remote_port=ssrServer.port;
+            profile.local_port=local_port;
+            profile.mtu=0;//we don't use udp relay, therefore we set mtu to zero.
+            profile.mode=0;//we don't use udp relay, therefore we set mode to zero.
+            profile.acl=NULL;
+            profile.log=NULL;
+            profile.fast_open=1;
+            start_ss_local_server(profile);
+            }),SSRThreadDeleter{}});
+            ssrThread.get_deleter().threadStart=true;
+            ssrThread->start();
+            return true;
+        } else if (ValidateConfig(filePath)) {
                 QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
                 env.insert("V2RAY_LOCATION_ASSET", GlobalConfig.v2AssetsPath);
                 vProcess->setProcessEnvironment(env);
@@ -195,9 +245,6 @@ namespace Qv2ray::core::kernel
                 }
 
                 return true;
-            } else if(type=="shadowsocksr"){
-
-            }
         } else {
             KernelStarted = false;
             return false;
@@ -210,7 +257,11 @@ namespace Qv2ray::core::kernel
             apiWorker->StopAPI();
             apiEnabled = false;
         }
-
+        if (ssrThread.get_deleter().threadStart)
+        {
+            stop_ss_local_server();
+            ssrThread=std::move(decltype (ssrThread){});
+        }
         // Set this to false BEFORE close the Process, since we need this flag to capture the real kernel CRASH
         KernelStarted = false;
         vProcess->close();
