@@ -109,7 +109,8 @@ namespace Qv2ray::core::kernel
 #else
         proc.start(vCorePath + " --version");
 #endif
-        proc.waitForStarted();
+        int status=proc.waitForStarted();
+        DEBUG(VCORE,"vcore --version qprocess status"+QString::number(status))
         proc.waitForFinished();
         auto exitCode = proc.exitCode();
 
@@ -146,6 +147,8 @@ namespace Qv2ray::core::kernel
             process.setProcessEnvironment(env);
             DEBUG(VCORE, "Starting V2ray core with test options")
             process.start(GlobalConfig.v2CorePath, QStringList() << "-test" << "-config" << path, QIODevice::ReadWrite | QIODevice::Text);
+            int status =process.waitForStarted();
+            DEBUG(VCORE,"vcore -test -config qprocess status"+QString::number(status))
             process.waitForFinished();
 
             if (process.exitCode() != 0) {
@@ -223,6 +226,7 @@ namespace Qv2ray::core::kernel
             ssrThread=make_unique<SSRThread>(local_port,outbound);
             connect(ssrThread.get(),&SSRThread::onSSRThreadLog,this,&V2rayKernelInstance::onProcessOutputReadyRead);
             ssrThread->start();
+            //KernelStarted = true;
             return true;
         } else if (ValidateConfig(filePath)) {
                 QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -274,6 +278,7 @@ namespace Qv2ray::core::kernel
             apiWorker->StopAPI();
             apiEnabled = false;
         }
+        if(ssrThread!=nullptr&&ssrThread->isRunning())
         {
             ssrThread=make_unique<SSRThread>();
         }
