@@ -1,74 +1,63 @@
-# Qv2ray - Make v2ray real cross-platform
+# qvssr
 
-[![archlinuxcn](https://img.shields.io/badge/archlinuxcn-available-success?style=flat-square)](https://build.archlinuxcn.org/packages/#/qv2ray)
-[![flathub](https://img.shields.io/badge/flathub-available-success?style=flat-square)](https://flathub.org/apps/details/com.github.Qv2ray)
-[![HitCount](http://hits.dwyl.io/Qv2ray/Qv2ray.svg)](http://hits.dwyl.io/Qv2ray/Qv2ray)
-![GitHub Releases](https://img.shields.io/github/downloads/Qv2ray/Qv2ray/latest/total?style=flat-square)
-[![AUR Stable](https://img.shields.io/aur/version/qv2ray?label=aur-stable&style=flat-square)](https://aur.archlinux.org/packages/qv2ray)
-
-使用 Qt 框架的跨平台 v2ray 客户端。支持 Windows, Linux, macOS。
-
-## Related Links
- - [Wiki](https://github.com/Qv2ray/Qv2ray/wiki) and [First Time Usage](https://github.com/Qv2ray/Qv2ray/wiki/Getting-Started-step0)
- - Latest **[Release Version](https://github.com/Qv2ray/Qv2ray/releases/latest)**
- - Translation platform, translations are welcome at here: **[Public Translation Platform](https://www.transifex.com/qv2ray/qv2ray)**
-
-## Special Thanks
-- **Quality Assurance & User Experience:** [@DuckSoft](https://github.com/DuckSoft/)
-- **Debian-based distro Packager:** [@ymshenyu](https://github.com/ymshenyu)
+A cross-platform V2ray/SS(R) client written in qt.
+![demo](docs/images/demo.png)
 
 -------------------------------
 
-## Copyright
-### This is free software, and you are welcome to redistribute it under certain conditions
-- ALL Credit goes to **Qv2ray User Group** and **Qv2ray Development Group**
-- Contributors (sorted alphabetically):
-  - @aliyuchang33
-  - @axionl
-  - @DuckSoft
-  - @lhy0403
-  - @rikakomoe
-  - @SoneWinstone
-  - @thebadgateway
+## How to build
+For arch users
+````bash
+yay -S hicolor-icon-theme qt5-base grpc git gcc make qt5-tools \
+       qt5-declarative grpc-cli
+git clone https://github.com/DuckVador/qvssr.git
+cd qvssr
+git submodule init
+git config submodule."libs/libqvb".active false
+git submodule update
+mkdir -p build && cd build
+qmake PREFIX=/usr ../
+make
+````
 
 
-### Libraries that have been used in Qv2ray are listed below (Sorted by date added)
-- Copyright (c) 2019 dridk (@dridk): **X2Struct** (Apache)
-- Copyright (c) 2011 SCHUTZ Sacha (@dridk): **QJsonModel** (MIT)
-- Copyright (c) 2019 Nikolaos Ftylitakis (@ftylitak): **QZXing** (Apache2)
-- Copyright (c) 2016 Singein (@Singein): **ScreenShot** (MIT)
-- Copyright (c) 2016 Nikhil Marathe (@nikhilm): **QHttpServer** (MIT)
-- Copyright (c) 2019 Itay Grudev (@itay-grudev): **SingleApplication** (MIT)
-- Copyright (c) 2019 paceholder (@paceholder): **nodeeditor (QNodeEditor modified by lhy0403)** (BSD-3-Clause)
-- Copyright (c) 2020 Ram Pani (@DuckSoft): **QvRPCBridge** (WTFPL)
-- Copyright (c) 2019 ShadowSocks (@shadowsocks): **libQtShadowsocks** (LGPLv3)
-- Copyright (c) 2015-2020 qBittorrent (Anton Lashkov) (@qBittorrent): **speedplotview** (GPLv2)
+## Project Motivation
 
-## Licences
+I have suffered electron-ssr poor performance for a long time which is based on electron and python. It runs fine on a desktop, but it has a high memory usage and poor performance on my chromebook.  I have no choice but to write one.
 
-Qv2ray is licenced under [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) 
+## To be improved
 
-```
-    Qv2ray, A Qt frontend for v2ray. Written in c++
+- [x] socks5 proxy mode for ssr.
+- [x] ssr subscription.
+- [x] switch v2ray and ssr easily.
+- [ ] http server mode for ssr.
+- [ ] pac proxy mode for ssr.
+- [ ] manual config for ssr. Currently we only support subscription for now.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+## Licence
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Shadowsocks-deepin is under [GPLv3](LICENSE) licence.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-```
+Appreciation to the following open source projects:
 
-***注意：Qv2ray 仅能用于 Qt/C++/Linux/CI/自动化 等相关技术的学习和在法律允许范围内的使用，任何个人或集体不得使用 Qv2ray 进行任何违反相关法律法规的活动。***
+- [qv2ray](https://github.com/Qv2ray/Qv2ray)
+- [shadowsocks-libev](https://github.com/shadowsocks/shadowsocks-libev)
+- [shadowsocksr-libev](https://web.archive.org/web/20170207153230/https://breakwa11.github.io/)
 
-> Note: Qv2ray can **ONLY** be used for learning related technologies such as Qt/C++/Linux/CI/automation and use within the scope permitted by law. Any individual or group **MAY NOT** use Qv2ray for any violation of relevant laws and regulations.
+## Dependencies
 
-*任何尝试下载或下载 Qv2ray 任意分支或发行版即代表您同意本项目作者不承担任何由于您违反以上准则所带来的任何法律责任。*
+| Name                   | License        |
+| ---------------------- | -------------- |
+| [X2Struct](https://github.com/xyz347/x2struct)   | Apache|
+| [QJsonModel](https://github.com/dridk/QJsonModel) | MIT|
+| [QZxing](https://github.com/ftylitak/qzxing) | Apache2|
+| [ScreenShot](https://github.com/Singein/ScreenShot)                  | MIT |
+| [QHttpServer](https://github.com/nikhilm/qhttpserver) | MIT|
+| [SingleApplication](https://github.com/itay-grudev/SingleApplication) | MIT|
+| [QHttpServer](https://github.com/nikhilm/qhttpserver) | MIT|
+| [QNodeEditor](https://github.com/paceholder/nodeeditor) | BSD-3-Clause|
+| [QvRPCBridge](https://github.com/Qv2ray/QvRPCBridge)                   | WTFPL       |
+| [speedplotview](https://github.com/qbittorrent/qBittorrent)            | GPLv2       |
+| [Qv2ray](https://github.com/Qv2ray/Qv2ray)            | GPLv3       |
 
-> Any attempt to download of any branch or distribution of Qv2ray constitutes your agreement that the author of the project **will not be** liable for any legal liability arising from your breach of the above guidelines.t
+
