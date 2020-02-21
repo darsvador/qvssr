@@ -92,14 +92,11 @@
 int verbose = 0;
 int keep_resolving = 1;
 
-#ifdef ANDROID
-int log_tx_rx  = 0;
-int vpn        = 0;
-uint64_t tx    = 0;
-uint64_t rx    = 0;
-ev_tstamp last = 0;
-char *prefix;
-#endif
+static int log_tx_rx  = 1;
+static uint64_t tx    = 0;
+static uint64_t rx    = 0;
+static ev_tstamp last = 0;
+
 #include "obfs/auth.h"
 #include "obfs/auth_chain.h"
 #include "obfs/base64.h"
@@ -376,10 +373,8 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                     }
                 }
                 // SSR end
-#ifdef ANDROID
                 if (log_tx_rx)
                     tx += buf->len;
-#endif
             }
 
             if (!remote->send_ctx->connected) {
@@ -932,7 +927,6 @@ server_send_cb(EV_P_ ev_io *w, int revents)
     }
 }
 
-#ifdef ANDROID
 static void
 stat_update_cb()
 {
@@ -945,7 +939,6 @@ stat_update_cb()
     }
 }
 
-#endif
 
 static void
 remote_timeout_cb(EV_P_ ev_timer *watcher, int revents)
@@ -974,9 +967,7 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
 
     ev_timer_again(EV_A_ & remote->recv_ctx->watcher);
 
-#ifdef ANDROID
     stat_update_cb();
-#endif
 
     ssize_t r = recv(remote->fd, server->buf->array, BUF_SIZE, 0);
 
@@ -1001,10 +992,8 @@ remote_recv_cb(EV_P_ ev_io *w, int revents)
     server->buf->len = r;
 
     if (!remote->direct) {
-#ifdef ANDROID
         if (log_tx_rx)
             rx += server->buf->len;
-#endif
         if ( r == 0 )
             return;
         // SSR beg

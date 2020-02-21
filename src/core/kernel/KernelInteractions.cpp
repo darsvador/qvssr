@@ -10,7 +10,7 @@
 namespace Qv2ray::core::kernel
 {
 SSRThread::SSRThread(){}
-SSRThread::SSRThread(int local_port,const OUTBOUND& outbound):localPort(local_port){
+SSRThread::SSRThread(int local_port,const OUTBOUND& outbound,QString inbound_tag):localPort(local_port),inboundTag(inbound_tag){
             auto ssrServer = StructFromJsonString<ShadowSocksRServerObject>(JsonToString(outbound["settings"].toObject()["servers"].toArray().first().toObject()));
             remotePort=ssrServer.port;
             remote_host=ssrServer.address.toStdString();
@@ -20,6 +20,10 @@ SSRThread::SSRThread(int local_port,const OUTBOUND& outbound):localPort(local_po
             obfs_param=ssrServer.obfs_param.toStdString();
             protocol=ssrServer.protocol.toStdString();
             protocol_param=ssrServer.protocol_param.toStdString();
+}
+QString SSRThread::getInboundTag()
+{
+   return inboundTag;
 }
 void SSRThread::run()
 {
@@ -208,10 +212,12 @@ namespace Qv2ray::core::kernel
 
         if(type=="shadowsocksr"){
             int local_port=0;
+            QString tag;
             for(const auto& item:root["inbounds"].toArray())
             {
                 if(item.toObject()["protocol"].toString(QObject::tr("N/A"))=="socks")
                 {
+                    tag = item.toObject()["tag"].toString("");
                     local_port = item.toObject()["port"].toInt(0);
                     break;
                 }
@@ -223,8 +229,9 @@ namespace Qv2ray::core::kernel
                 return false;
             }
             OUTBOUND outbound = OUTBOUND(root["outbounds"].toArray().first().toObject());
-            ssrThread=make_unique<SSRThread>(local_port,outbound);
+            ssrThread=make_unique<SSRThread>(local_port,outbound,tag);
             connect(ssrThread.get(),&SSRThread::onSSRThreadLog,this,&V2rayKernelInstance::onProcessOutputReadyRead);
+            connect(ssrThread.get(), &SSRThread::OnDataReady, this, &V2rayKernelInstance::onAPIDataReady);
             ssrThread->start();
             //KernelStarted = true;
             return true;

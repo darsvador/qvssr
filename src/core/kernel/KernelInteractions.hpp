@@ -10,10 +10,12 @@ namespace Qv2ray::core::kernel
         Q_OBJECT
     public:
         explicit SSRThread();
-        explicit SSRThread(int local_port,const OUTBOUND& outbound);
+        explicit SSRThread(int local_port,const OUTBOUND& outbound,QString inboundTag);
+        QString getInboundTag();
         void run() override;
         ~SSRThread() override;
     signals:
+        void OnDataReady(QString tag, long dataUp, long dataDown);
         void onSSRThreadLog(QString);
     private:
        int localPort;
@@ -25,6 +27,7 @@ namespace Qv2ray::core::kernel
        std::string obfs_param;
        std::string protocol;
        std::string protocol_param;
+       QString inboundTag;
     };
 
     class V2rayKernelInstance : public QObject
