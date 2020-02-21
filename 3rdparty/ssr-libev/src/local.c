@@ -113,6 +113,7 @@ static int mode = TCP_ONLY;
 static int ipv6first = 0;
 static bool stop=false;
 static int fast_open = 0;
+static struct ev_loop* loop=NULL;
 static struct ev_timer* stop_watcher=NULL;
 #ifdef HAVE_SETRLIMIT
 #ifndef LIB_ONLY
@@ -1474,11 +1475,11 @@ void
 stop_timer_cb(EV_P_ ev_timer *w, int revents)
 {
     if(stop) {
-        ev_timer_stop(EV_DEFAULT,stop_watcher);
+        ev_timer_stop(loop,stop_watcher);
         ev_unloop(EV_A_ EVUNLOOP_ALL);
     } else {
         stop_watcher->repeat=0.5;
-        ev_timer_again(EV_DEFAULT,stop_watcher);
+        ev_timer_again(loop,stop_watcher);
     }
 }
 
@@ -1553,7 +1554,7 @@ start_ss_local_server(profile_t profile)
     }
 
     // Setup proxy context
-    struct ev_loop *loop = EV_DEFAULT;
+    loop = ev_loop_new(0);
     listen_ctx_t *listen_ctx = (listen_ctx_t *)ss_malloc(sizeof(listen_ctx_t));
     memset(listen_ctx, 0, sizeof(listen_ctx_t));
     current_profile=listen_ctx;
@@ -1597,6 +1598,7 @@ start_ss_local_server(profile_t profile)
         ev_io_start(loop, &listen_ctx->io);
     }
 
+    // TODO Currently we don't support UDP relay.
     // Setup UDP
     if (mode != TCP_ONLY) {
         LOGI("udprelay enabled");
