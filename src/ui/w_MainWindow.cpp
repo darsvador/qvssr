@@ -30,7 +30,7 @@
 
 // MainWindow.cpp --> Main MainWindow source file, handles mostly UI-related operations.
 
-#define TRAY_TOOLTIP_PREFIX "Qv2ray " QV2RAY_VERSION_STRING
+#define TRAY_TOOLTIP_PREFIX "qvssr" QV2RAY_VERSION_STRING
 //
 #define vCoreLogBrowser this->logTextBrowsers[0]
 #define qvAppLogBrowser this->logTextBrowsers[1]
@@ -101,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), vinstance(), hTray
                          tr("To solve the problem, read the V2ray log in the log text browser."));
     });
     //
+    this->setWindowTitle("fff");
     setupUi(this);
     QvMessageBusConnect(MainWindow);
     //
@@ -448,7 +449,7 @@ void MainWindow::on_startButton_clicked()
             MWTryPingConnection(name);
             speedTimerId = startTimer(1000);
             pingTimerId = startTimer(60000);
-            this->hTray.showMessage("Qv2ray", tr("Connected: ") + name, this->windowIcon());
+            this->hTray.showMessage("qvssr", tr("Connected: ") + name, this->windowIcon());
             hTray.setToolTip(TRAY_TOOLTIP_PREFIX NEWLINE + tr("Connected: ") + name);
             statusLabel->setText(tr("Connected: ") + name);
         } else {
@@ -465,7 +466,7 @@ void MainWindow::on_startButton_clicked()
         startButton->setEnabled(!startFlag);
         stopButton->setEnabled(startFlag);
     } else {
-        this->hTray.showMessage("Qv2ray", tr("Already connected to: ") + CurrentConnectionIdentifier.IdentifierString(), this->windowIcon());
+        this->hTray.showMessage("qvssr", tr("Already connected to: ") + CurrentConnectionIdentifier.IdentifierString(), this->windowIcon());
     }
 }
 
@@ -490,7 +491,7 @@ void MainWindow::on_stopButton_clicked()
     netspeedLabel->setText("0.00 B/s\r\n0.00 B/s");
     dataamountLabel->setText("0.00 B\r\n0.00 B");
     LOG(UI, "Stopped successfully.")
-    this->hTray.showMessage("Qv2ray", tr("Disconnected from: ") + CurrentConnectionIdentifier.IdentifierString());
+    this->hTray.showMessage("qvssr", tr("Disconnected from: ") + CurrentConnectionIdentifier.IdentifierString());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

@@ -724,7 +724,7 @@ void RouteEditor::on_delBtn_clicked()
         //ShowCurrentRuleDetail();
     } else {
         LOG(UI, "Unknown node selected.")
-        QvMessageBoxWarn(this, tr("Error"), tr("Qv2ray entered an unknown state."));
+        QvMessageBoxWarn(this, tr("Error"), tr("qvssr entered an unknown state."));
     }
 }
 void RouteEditor::on_editBtn_clicked()

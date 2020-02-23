@@ -105,8 +105,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_ImportConfig.ui"/>
-        <source>Hide Qv2ray</source>
-        <translation>隐藏 Qv2ray</translation>
+        <source>Hide qvssr</source>
+        <translation>隐藏 qvssr</translation>
     </message>
     <message>
         <location filename="../src/ui/w_ImportConfig.ui"/>
@@ -535,8 +535,8 @@
     </message>
     <message>
         <location filename="../src/ui/editors/w_InboundEditor.cpp" line="31"/>
-        <source>The inbound type is not supported by Qv2ray (yet). Please use JsonEditor to change the settings</source>
-        <translation>Qv2ray （暂时）不支持这个入站类型。请使用 JsonEditor 更改设置</translation>
+        <source>The inbound type is not supported by qvssr (yet). Please use JsonEditor to change the settings</source>
+        <translation>qvssr （暂时）不支持这个入站类型。请使用 JsonEditor 更改设置</translation>
     </message>
     <message>
         <location filename="../src/ui/editors/w_InboundEditor.cpp" line="32"/>
@@ -626,8 +626,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/ui/w_MainWindow.ui"/>
-        <source>Qv2ray</source>
-        <translation>Qv2ray</translation>
+        <source>qvssr</source>
+        <translation>qvssr</translation>
     </message>
     <message>
         <location filename="../src/ui/w_MainWindow.ui"/>
@@ -968,8 +968,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_MainWindow_extra.cpp" line="102"/>
-        <source>Qv2ray will continue, but will not set system proxy.</source>
-        <translation>Qv2ray 将继续，但不会设置系统代理。</translation>
+        <source>qvssr will continue, but will not set system proxy.</source>
+        <translation>qvssr 将继续，但不会设置系统代理。</translation>
     </message>
     <message>
         <location filename="../src/ui/w_MainWindow_extra.cpp" line="114"/>
@@ -1816,8 +1816,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.ui"/>
-        <source>Qv2ray</source>
-        <translation>Qv2ray</translation>
+        <source>qvssr</source>
+        <translation>qvssr</translation>
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.ui"/>
@@ -1882,8 +1882,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="32"/>
-        <source>Qv2ray Network Toolbar is disabled and still under test. Add --withToolbarPlugin to enable.</source>
-        <translation>Qv2ray 的网络工具栏已被禁用，请使用 --withToolbarPlugin 来启用</translation>
+        <source>qvssr Network Toolbar is disabled and still under test. Add --withToolbarPlugin to enable.</source>
+        <translation>qvssr 的网络工具栏已被禁用，请使用 --withToolbarPlugin 来启用</translation>
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="235"/>
@@ -1912,8 +1912,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="418"/>
-        <source>Qv2ray will copy your V2ray core to this path: </source>
-        <translation>Qv2ray 会将您的 V2ray 核心复制到以下路径： </translation>
+        <source>qvssr will copy your V2ray core to this path: </source>
+        <translation>qvssr 会将您的 V2ray 核心复制到以下路径： </translation>
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="419"/>
@@ -1922,8 +1922,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="465"/>
-        <source>Qv2ray cannot copy one or both V2ray files from: </source>
-        <translation>Qv2ray 无法从以下位置复制一个或两个 V2ray 文件： </translation>
+        <source>qvssr cannot copy one or both V2ray files from: </source>
+        <translation>qvssr 无法从以下位置复制一个或两个 V2ray 文件： </translation>
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="480"/>
@@ -1958,8 +1958,8 @@
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="814"/>
-        <source>Please restart Qv2ray to fully apply this feature.</source>
-        <translation>请重启 Qv2ray 以充分应用此功能。</translation>
+        <source>Please restart qvssr to fully apply this feature.</source>
+        <translation>请重启 qvssr 以充分应用此功能。</translation>
     </message>
     <message>
         <location filename="../src/ui/w_PreferencesWindow.cpp" line="875"/>
@@ -2078,13 +2078,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/main.cpp" line="97"/>
-        <source>Qv2ray cannot load the config file from here:</source>
-        <translation>Qv2ray 无法从这里加载配置文件：</translation>
+        <source>qvssr cannot load the config file from here:</source>
+        <translation>qvssr 无法从这里加载配置文件：</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="192"/>
-        <source>Cannot Start Qv2ray</source>
-        <translation>无法启动 Qv2ray</translation>
+        <source>Cannot Start qvssr</source>
+        <translation>无法启动 qvssr</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="193"/>
@@ -2093,20 +2093,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/main.cpp" line="194"/>
-        <source>Qv2ray has searched these paths below:</source>
-        <translation>Qv2ray 搜索了以下路径：</translation>
+        <source>qvssr has searched these paths below:</source>
+        <translation>qvssr 搜索了以下路径：</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="173"/>
         <location filename="../src/main.cpp" line="196"/>
         <location filename="../src/main.cpp" line="342"/>
-        <source>Qv2ray will now exit.</source>
-        <translation>Qv2ray 现在将退出。</translation>
+        <source>qvssr will now exit.</source>
+        <translation>qvssr 现在将退出。</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="171"/>
-        <source>Failed to initialise Qv2ray</source>
-        <translation>初始化 Qv2ray 失败</translation>
+        <source>Failed to initialise qvssr</source>
+        <translation>初始化 qvssr 失败</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="172"/>
@@ -2120,8 +2120,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/main.cpp" line="255"/>
-        <source>You cannot run Qv2ray as root, please use --I-just-wanna-run-with-root if you REALLY want to do so.</source>
-        <translation>您不能以root用户身份运行Qv2ray，如果您确实想这样做，请使用 --I-just-wanna-run-with-root。</translation>
+        <source>You cannot run qvssr as root, please use --I-just-wanna-run-with-root if you REALLY want to do so.</source>
+        <translation>您不能以root用户身份运行qvssr，如果您确实想这样做，请使用 --I-just-wanna-run-with-root。</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="256"/>
@@ -2135,18 +2135,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/main.cpp" line="319"/>
-        <source>Qv2ray will continue running, but you cannot change the UI language.</source>
-        <translation>Qv2ray 将继续运行，但您不能更改界面语言。</translation>
+        <source>qvssr will continue running, but you cannot change the UI language.</source>
+        <translation>qvssr 将继续运行，但您不能更改界面语言。</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="338"/>
-        <source>Qv2ray Cannot Continue</source>
-        <translation>Qv2ray 无法继续</translation>
+        <source>qvssr Cannot Continue</source>
+        <translation>qvssr 无法继续</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="339"/>
-        <source>You are running a lower version of Qv2ray compared to the current config file.</source>
-        <translation>与当前配置文件相比，您正在运行一个较低版本的 Qv2ray</translation>
+        <source>You are running a lower version of qvssr compared to the current config file.</source>
+        <translation>与当前配置文件相比，您正在运行一个较低版本的 qvssr</translation>
     </message>
     <message>
         <location filename="../src/main.cpp" line="340"/>
@@ -2210,8 +2210,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/components/plugins/toolbar/QvToolbar.hpp" line="17"/>
-        <source>Current Qv2ray Version</source>
-        <translation>当前 Qv2ray 版本</translation>
+        <source>Current qvssr Version</source>
+        <translation>当前 qvssr 版本</translation>
     </message>
     <message>
         <location filename="../src/components/plugins/toolbar/QvToolbar.hpp" line="18"/>
@@ -2298,8 +2298,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/common/CommandArgs.cpp" line="14"/>
-        <source>Qv2ray - A cross-platform Qt frontend for V2ray.</source>
-        <translation>Qv2ray - V2ray的跨平台Qt前端。</translation>
+        <source>qvssr - A cross-platform Qt frontend for V2ray.</source>
+        <translation>qvssr - V2ray的跨平台Qt前端。</translation>
     </message>
     <message>
         <location filename="../src/common/CommandArgs.cpp" line="7"/>
@@ -2308,8 +2308,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/common/CommandArgs.cpp" line="8"/>
-        <source>Explicitly run Qv2ray as root.</source>
-        <translation>以 root 身份运行 Qv2ray。</translation>
+        <source>Explicitly run qvssr as root.</source>
+        <translation>以 root 身份运行 qvssr。</translation>
     </message>
     <message>
         <location filename="../src/common/CommandArgs.cpp" line="9"/>
@@ -2318,12 +2318,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/common/CommandArgs.cpp" line="10"/>
-        <source>Enable Qv2ray network toolbar plugin</source>
-        <translation>启用 Qv2ray 网络工具栏插件</translation>
+        <source>Enable qvssr network toolbar plugin</source>
+        <translation>启用 qvssr 网络工具栏插件</translation>
     </message>
 </context>
 <context>
-    <name>Qv2ray::components::pac::PACServer</name>
+    <name>qvssr::components::pac::PACServer</name>
     <message>
         <location filename="../src/components/pac/QvPACHandler.cpp" line="44"/>
         <source>PAC Handler</source>
@@ -2336,7 +2336,7 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>Qv2ray::core::kernel::V2rayKernelInstance</name>
+    <name>qvssr::core::kernel::V2rayKernelInstance</name>
     <message>
         <location filename="../src/core/kernel/KernelInteractions.cpp" line="16"/>
         <source>V2ray core executable not found.</source>
@@ -2755,8 +2755,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../src/ui/editors/w_RoutesEditor.cpp" line="727"/>
-        <source>Qv2ray entered an unknown state.</source>
-        <translation>Qv2ray 进入了未知状态</translation>
+        <source>qvssr entered an unknown state.</source>
+        <translation>qvssr 进入了未知状态</translation>
     </message>
     <message>
         <location filename="../src/ui/editors/w_RoutesEditor.cpp" line="733"/>

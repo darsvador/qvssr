@@ -28,7 +28,7 @@ InboundEditor::InboundEditor(INBOUND root, QWidget *parent) :
     } else {
         if (!root["protocol"].toString().isEmpty()) {
             LOG(UI, "Unsupported inbound type: " + inboundType)
-            QvMessageBoxWarn(this, tr("Inbound type not supported"), tr("The inbound type is not supported by Qv2ray (yet). Please use JsonEditor to change the settings") + "\r\n" +
+            QvMessageBoxWarn(this, tr("Inbound type not supported"), tr("The inbound type is not supported by qvssr (yet). Please use JsonEditor to change the settings") + "\r\n" +
                              tr("Inbound: ") + inboundType);
         } else {
             LOG(UI, "Creating new inbound config")

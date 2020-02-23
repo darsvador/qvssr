@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Qv2ray</string>
+   <string>qvssr</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">

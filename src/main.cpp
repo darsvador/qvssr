@@ -45,7 +45,7 @@ bool verifyConfigAvaliability(QString path, bool checkExistingConfig)
         LOG(INIT, "---> Cannot create a new file or openwrite a file.")
         return false;
     } else {
-        testFile.write("Qv2ray test file, feel free to remove.");
+        testFile.write("qvssr test file, feel free to remove.");
         testFile.flush();
         testFile.close();
         bool removed = testFile.remove();
@@ -60,7 +60,7 @@ bool verifyConfigAvaliability(QString path, bool checkExistingConfig)
 
     if (checkExistingConfig) {
         // Check if an existing config is found.
-        QFile configFile(path + "Qv2ray.conf");
+        QFile configFile(path + "qvssr.conf");
 
         // No such config file.
         if (!configFile.exists()) return false;
@@ -94,7 +94,7 @@ bool verifyConfigAvaliability(QString path, bool checkExistingConfig)
         }  catch (...) {
             LOG(SETTINGS, "Exception raised when checking config: " + configFile.fileName())
             //LOG(INIT, e->what())
-            QvMessageBoxWarn(nullptr, QObject::tr("Warning"), QObject::tr("Qv2ray cannot load the config file from here:") + NEWLINE + configFile.fileName());
+            QvMessageBoxWarn(nullptr, QObject::tr("Warning"), QObject::tr("qvssr cannot load the config file from here:") + NEWLINE + configFile.fileName());
             return false;
         }
     } else return true;
@@ -104,8 +104,8 @@ bool initialiseQv2ray()
 {
     LOG(INIT, "Application exec path: " + QApplication::applicationDirPath())
     const QString currentPathConfig = QApplication::applicationDirPath() + "/config" QV2RAY_CONFIG_DIR_SUFFIX;
-    const QString configQv2ray = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/qv2ray" QV2RAY_CONFIG_DIR_SUFFIX;
-    const QString homeQv2ray = QDir::homePath() + "/.qv2ray" QV2RAY_CONFIG_DIR_SUFFIX;
+    const QString configQv2ray = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation) + "/qvssr" QV2RAY_CONFIG_DIR_SUFFIX;
+    const QString homeQv2ray = QDir::homePath() + "/.qvssr" QV2RAY_CONFIG_DIR_SUFFIX;
     //
     //
     // Some built-in search paths for Qv2ray to find configs. (load the first one if possible).
@@ -167,10 +167,10 @@ bool initialiseQv2ray()
                 // It usually means that QV2RAY_CONFIG_FILE here is corrupted, in JSON format.
                 // Otherwise Qv2ray would have loaded this config already instead of notifying to
                 // create a new config in this folder.
-                LOG(INIT, "This should not occur: Qv2ray config exists but failed to load.")
-                QvMessageBoxWarn(nullptr, QObject::tr("Failed to initialise Qv2ray"),
+                LOG(INIT, "This should not occur: qvssr config exists but failed to load.")
+                QvMessageBoxWarn(nullptr, QObject::tr("Failed to initialise qvssr"),
                                  QObject::tr("Failed to determine the location of config file.") + NEWLINE +
-                                 QObject::tr("Qv2ray will now exit.") + NEWLINE +
+                                 QObject::tr("qvssr will now exit.") + NEWLINE +
                                  QObject::tr("Please report if you think it's a bug."));
                 return false;
             }
@@ -187,13 +187,13 @@ bool initialiseQv2ray()
             // None of the path above can be used as a dir for storing config.
             // Even the last folder failed to pass the check.
             LOG(INIT, "FATAL")
-            LOG(INIT, " ---> CANNOT find a proper place to store Qv2ray config files.")
+            LOG(INIT, " ---> CANNOT find a proper place to store qvssr config files.")
             QString searchPath = configFilePaths.join(NEWLINE);
-            QvMessageBoxWarn(nullptr, QObject::tr("Cannot Start Qv2ray"),
+            QvMessageBoxWarn(nullptr, QObject::tr("Cannot Start qvssr"),
                              QObject::tr("Cannot find a place to store config files.") + NEWLINE +
-                             QObject::tr("Qv2ray has searched these paths below:") +
+                             QObject::tr("qvssr has searched these paths below:") +
                              NEWLINE + NEWLINE + searchPath + NEWLINE +
-                             QObject::tr("Qv2ray will now exit."));
+                             QObject::tr("qvssr will now exit."));
             return false;
         }
     }
@@ -252,7 +252,7 @@ int main(int argc, char *argv[])
     // Unix OS root user check.
     // Do not use getuid() here since it's installed as owned by the root, someone may accidently setuid to it.
     if (!StartupOption.forceRunAsRootUser && geteuid() == 0) {
-        LOG("ERROR", QObject::tr("You cannot run Qv2ray as root, please use --I-just-wanna-run-with-root if you REALLY want to do so."))
+        LOG("ERROR", QObject::tr("You cannot run qvssr as root, please use --I-just-wanna-run-with-root if you REALLY want to do so."))
         LOG("ERROR", QObject::tr(" --> USE IT AT YOUR OWN RISK!"))
         return 1;
     }
@@ -262,17 +262,17 @@ int main(int argc, char *argv[])
     // finished: command line parsing
     LOG("QV2RAY_BUILD_INFO", QV2RAY_BUILD_INFO)
     LOG("QV2RAY_BUILD_EXTRA_INFO", QV2RAY_BUILD_EXTRA_INFO)
-    LOG(INIT, "Qv2ray " QV2RAY_VERSION_STRING " running on " + QSysInfo::prettyProductName() + " " + QSysInfo::currentCpuArchitecture() + NEWLINE)
+    LOG(INIT, "qvssr " QV2RAY_VERSION_STRING " running on " + QSysInfo::prettyProductName() + " " + QSysInfo::currentCpuArchitecture() + NEWLINE)
     //
     // This line must be called before any other ones, since we are using these values to identify instances.
-    SingleApplication::setApplicationName("Qv2ray");
+    SingleApplication::setApplicationName("qvssr");
     SingleApplication::setApplicationVersion(QV2RAY_VERSION_STRING);
-    SingleApplication::setApplicationDisplayName("Qv2ray");
+    SingleApplication::setApplicationDisplayName("qvssr");
     //
     //
 #ifdef QT_DEBUG
     // ----------------------------> For debug build...
-    SingleApplication::setApplicationName("Qv2ray - DEBUG");
+    SingleApplication::setApplicationName("qvssr - DEBUG");
 #endif
     SingleApplication _qApp(argc, argv, false, SingleApplication::Mode::User | SingleApplication::Mode::ExcludeAppPath | SingleApplication::Mode::ExcludeAppVersion);
     _qApp.setQuitOnLastWindowClosed(false);
@@ -317,7 +317,7 @@ int main(int argc, char *argv[])
 
     if (langs.empty()) {
         LOG(INIT, "FAILED to find any translations. THIS IS A BUILD ERROR.")
-        QvMessageBoxWarn(nullptr, QObject::tr("Cannot load languages"), QObject::tr("Qv2ray will continue running, but you cannot change the UI language."));
+        QvMessageBoxWarn(nullptr, QObject::tr("Cannot load languages"), QObject::tr("qvssr will continue running, but you cannot change the UI language."));
     } else {
         for (auto lang : langs) {
             LOG(INIT, "Found Translator: " + lang)
@@ -336,11 +336,11 @@ int main(int argc, char *argv[])
     if (confVersion > QV2RAY_CONFIG_VERSION) {
         // Config version is larger than the current version...
         // This is rare but it may happen....
-        QvMessageBoxWarn(nullptr, QObject::tr("Qv2ray Cannot Continue"),
-                         QObject::tr("You are running a lower version of Qv2ray compared to the current config file.") + NEWLINE +
+        QvMessageBoxWarn(nullptr, QObject::tr("qvssr Cannot Continue"),
+                         QObject::tr("You are running a lower version of qvssr compared to the current config file.") + NEWLINE +
                          QObject::tr("Please check if there's an issue explaining about it.") + NEWLINE +
                          QObject::tr("Or submit a new issue if you think this is an error.") + NEWLINE + NEWLINE +
-                         QObject::tr("Qv2ray will now exit."));
+                         QObject::tr("qvssr will now exit."));
         return -2;
     }
 
@@ -442,7 +442,7 @@ int main(int argc, char *argv[])
 
     if (themes.contains(confObject.uiConfig.theme)) {
         _qApp.setStyle(confObject.uiConfig.theme);
-        LOG(INIT + " " + UI, "Setting Qv2ray UI themes: " + confObject.uiConfig.theme)
+        LOG(INIT + " " + UI, "Setting qvssr UI themes: " + confObject.uiConfig.theme)
     }
 
 #endif
@@ -477,7 +477,7 @@ int main(int argc, char *argv[])
         return rcode;
 #ifndef QT_DEBUG
     }  catch (...) {
-        QvMessageBoxWarn(nullptr, "ERROR", "There's something wrong happened and Qv2ray will quit now.");
+        QvMessageBoxWarn(nullptr, "ERROR", "There's something wrong happened and qvssr will quit now.");
         LOG(INIT, "EXCEPTION THROWN: " __FILE__)
         return -99;
     }

@@ -29,7 +29,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) : QDialog(parent),
     networkToolbarPage->setEnabled(StartupOption.enableToolbarPlguin);
 
     if (!StartupOption.enableToolbarPlguin) {
-        networkToolbarInfoLabel->setText(tr("Qv2ray Network Toolbar is disabled and still under test. Add --withToolbarPlugin to enable."));
+        networkToolbarInfoLabel->setText(tr("qvssr Network Toolbar is disabled and still under test. Add --withToolbarPlugin to enable."));
     }
 
     // We add locales
@@ -415,7 +415,7 @@ void PreferencesWindow::on_tProxyCheckBox_stateChanged(int arg1)
         // We enable it!
         if (QvMessageBoxAsk(this, tr("Enable tProxy Support"),
                             tr("This will append capabilities to the V2ray executable.")  + NEWLINE + NEWLINE +
-                            tr("Qv2ray will copy your V2ray core to this path: ") + NEWLINE + QV2RAY_TPROXY_VCORE_PATH + NEWLINE + NEWLINE +
+                            tr("qvssr will copy your V2ray core to this path: ") + NEWLINE + QV2RAY_TPROXY_VCORE_PATH + NEWLINE + NEWLINE +
                             tr("If anything goes wrong after enabling this, please check issue #57 or the link below:") + NEWLINE +
                             " https://github.com/Qv2ray/Qv2ray/wiki/FAQ ") != QMessageBox::Yes) {
             tProxyCheckBox->setChecked(false);
@@ -462,7 +462,7 @@ void PreferencesWindow::on_tProxyCheckBox_stateChanged(int arg1)
                 } else {
                     LOG(VCORE, "FAILED to copy V2ray files. Aborting.")
                     QvMessageBoxWarn(this, tr("Enable tProxy Support"),
-                                     tr("Qv2ray cannot copy one or both V2ray files from: ") + NEWLINE + NEWLINE +
+                                     tr("qvssr cannot copy one or both V2ray files from: ") + NEWLINE + NEWLINE +
                                      CurrentConfig.v2CorePath + NEWLINE + v2ctlPath + NEWLINE + NEWLINE +
                                      tr("to this path: ") + NEWLINE + newPath);
                     return;
@@ -811,7 +811,7 @@ void PreferencesWindow::on_darkThemeCB_stateChanged(int arg1)
 {
     LOADINGCHECK
     CurrentConfig.uiConfig.useDarkTheme = arg1 == Qt::Checked;
-    QvMessageBoxWarn(this, tr("Dark Mode"), tr("Please restart Qv2ray to fully apply this feature."));
+    QvMessageBoxWarn(this, tr("Dark Mode"), tr("Please restart qvssr to fully apply this feature."));
 #ifdef QV2RAY_USE_BUILTIN_DARKTHEME
     themeCombo->setEnabled(arg1 != Qt::Checked);
 

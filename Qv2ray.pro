@@ -6,7 +6,7 @@
 
 QT += core gui widgets network
 
-TARGET = qv2ray
+TARGET = qvssr
 TEMPLATE = app
 CONFIG += use_grpc
 CONFIG += object_parallel_to_source
@@ -19,19 +19,19 @@ QV2RAY_BUILD_VERSION=$$cat($$PWD/makespec/BUILDVERSION)
 VERSION = $${QV2RAY_VERSION}.$${QV2RAY_BUILD_VERSION}
 
 message(" ")
-message("Qv2ray Version: $${VERSION}")
-message("|-------------------------------------------------|")
-message("| Qv2ray, A Cross Platform v2ray Qt GUI Client.   |")
-message("| Licenced under GPLv3                            |")
-message("|                                                 |")
-message("| You may only use this program to the extent     |")
-message("| permitted by local law.                         |")
-message("|                                                 |")
-message("| See: https://www.gnu.org/licenses/gpl-3.0.html  |")
-message("|-------------------------------------------------|")
-message("| Project Homepage: https://github.com/Qv2ray     |")
-message("| Welcome to contribute!                          |")
-message("|-------------------------------------------------|")
+message("qvssr Version: $${VERSION}")
+message("|-------------------------------------------------------|")
+message("| qvssr , A Cross Platform v2ray/SS(R) Qt GUI Client.   |")
+message("| Licenced under GPLv3                                  |")
+message("|                                                       |")
+message("| You may only use this program to the extent           |")
+message("| permitted by local law.                               |")
+message("|                                                       |")
+message("| See: https://www.gnu.org/licenses/gpl-3.0.html        |")
+message("|-------------------------------------------------------|")
+message("| Project Homepage: https://github.com/maxco2/qvssr     |")
+message("| Welcome to contribute!                                |")
+message("|-------------------------------------------------------|")
 message(" ")
 
 # Distinguish debug and release builds.
@@ -161,12 +161,12 @@ use_grpc {
 include($$PWD/makespec/99-others.pri)
 
 message(" ")
-message("This Qv2ray build contains: ")
+message("This qvssr  build contains: ")
 message("  --> $${size(SOURCES)} source files")
 message("  --> $${size(HEADERS)} header files")
 message("  --> $${size(FORMS)} ui files")
 message("  --> $${size(TRANSLATIONS)} translation files")
 message("  --> $${size(EXTRA_TRANSLATIONS)} extra translation files")
 message(" ")
-message("Finished configuring Qv2ray project. Build output will be at:" $$OUT_PWD)
+message("Finished configuring qvssr  project. Build output will be at:" $$OUT_PWD)
 message("Type 'make' or 'nmake' to start building Qv2ray")

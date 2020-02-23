@@ -67,7 +67,7 @@ void MainWindow::MWClearSystemProxy(bool showMessage)
     systemProxyEnabled = false;
 
     if (showMessage) {
-        hTray.showMessage("Qv2ray", tr("System proxy cleared."), windowIcon());
+        hTray.showMessage("qvssr", tr("System proxy cleared."), windowIcon());
     }
 }
 
@@ -99,7 +99,7 @@ void MainWindow::MWSetSystemProxy()
                 LOG(PROXY, " --> PAC is configured to use socks but socks is not enabled.")
                 LOG(PROXY, " --> PAC is configuted to use http but http is not enabled.")
                 QvMessageBoxWarn(this, tr("PAC Processing Failed"), tr("HTTP or SOCKS inbound is not properly configured for PAC") +
-                                 NEWLINE + tr("Qv2ray will continue, but will not set system proxy."));
+                                 NEWLINE + tr("qvssr will continue, but will not set system proxy."));
                 canSetSystemProxy = false;
             }
         } else {
@@ -124,10 +124,10 @@ void MainWindow::MWSetSystemProxy()
             // If usePAC is set
             SetSystemProxy(proxyAddress, httpPort, socksPort, usePAC);
             systemProxyEnabled = true;
-            hTray.showMessage("Qv2ray", tr("System proxy settings applied."), windowIcon());
+            hTray.showMessage("qvssr", tr("System proxy settings applied."), windowIcon());
         }
     } else {
-        hTray.showMessage("Qv2ray", tr("Cannot set proxy for complex config."), windowIcon());
+        hTray.showMessage("qvssr", tr("Cannot set proxy for complex config."), windowIcon());
     }
 }
 

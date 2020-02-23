@@ -5,13 +5,13 @@ namespace Qv2ray::common
 {
     QvCommandArgParser::QvCommandArgParser() : QObject(),
         noAPIOption("noAPI", QObject::tr("Disable gRPC API subsystems.")),
-        runAsRootOption("I-just-wanna-run-with-root", QObject::tr("Explicitly run Qv2ray as root.")),
+        runAsRootOption("I-just-wanna-run-with-root", QObject::tr("Explicitly run qvssr as root.")),
         debugOption("debug", QObject::tr("Enable Debug Output")),
-        withToolbarOption("withToolbarPlugin", QObject::tr("Enable Qv2ray network toolbar plugin")),
+        withToolbarOption("withToolbarPlugin", QObject::tr("Enable qvssr network toolbar plugin")),
         //
         helpOption("FAKE"), versionOption("FAKE")
     {
-        parser.setApplicationDescription(QObject::tr("Qv2ray - A cross-platform Qt frontend for V2ray."));
+        parser.setApplicationDescription(QObject::tr("qvssr - A cross-platform Qt frontend for V2ray."));
         parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
         //
         parser.addOption(noAPIOption);
