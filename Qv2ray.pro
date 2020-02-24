@@ -8,7 +8,6 @@ QT += core gui widgets network
 
 TARGET = qvssr
 TEMPLATE = app
-CONFIG += use_grpc
 CONFIG += object_parallel_to_source
 DEFINES += QV2RAY_DEFAULT_VCORE_PATH=\\\"/usr/bin/v2ray\\\"
 DEFINES += QV2RAY_DEFAULT_VASSETS_PATH=\\\"/usr/lib/v2ray\\\"
@@ -109,8 +108,14 @@ Qv2rayAddSource(ui, _, w_ScreenShot_Core, cpp, hpp, ui)
 Qv2rayAddSource(ui, _, w_SubscriptionManager, cpp, hpp, ui)
 Qv2rayAddSource(ui, widgets, StreamSettingsWidget, cpp, hpp, ui)
 
-SOURCES += $$PWD/src/main.cpp
-HEADERS +=
+SOURCES += $$PWD/src/main.cpp \
+    src/core/kernel/ShadowsocksrInstance.cpp \
+    src/core/kernel/httpproxy.cpp \
+    src/core/kernel/socketstream.cpp
+HEADERS += \
+    src/core/kernel/ShadowsocksrInstance.h \
+    src/core/kernel/httpproxy.hpp \
+    src/core/kernel/socketstream.hpp
 FORMS +=
 INCLUDEPATH += $$PWD/src
 RESOURCES += $$PWD/resources.qrc

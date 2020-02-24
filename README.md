@@ -30,9 +30,10 @@ I have suffered electron-ssr poor performance for a long time which is based on 
 - [x] socks5 proxy mode for ssr.
 - [x] ssr subscription.
 - [x] switch v2ray and ssr easily.
-- [ ] http server mode for ssr.
+- [x] http server mode for ssr.
 - [ ] pac proxy mode for ssr.
 - [ ] manual config for ssr. Currently we only support subscription for now.
+- [ ] support windows.
 
 ## Licence
 

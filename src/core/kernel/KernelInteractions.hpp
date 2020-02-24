@@ -2,33 +2,9 @@
 #include <QProcess>
 #include "base/Qv2rayBase.hpp"
 #include "APIBackend.hpp"
-#include "shadowsocks.h"
+#include "ShadowsocksrInstance.h"
 namespace Qv2ray::core::kernel
 {
-    class SSRThread : public QThread
-    {
-        Q_OBJECT
-    public:
-        explicit SSRThread();
-        explicit SSRThread(int local_port,const OUTBOUND& outbound,QString inboundTag);
-        QString getInboundTag();
-        void run() override;
-        ~SSRThread() override;
-    signals:
-        void OnDataReady(QString tag, long dataUp, long dataDown);
-        void onSSRThreadLog(QString);
-    private:
-       int localPort;
-       int remotePort;
-       std::string remote_host;
-       std::string method;
-       std::string password;
-       std::string obfs;
-       std::string obfs_param;
-       std::string protocol;
-       std::string protocol_param;
-       QString inboundTag;
-    };
 
     class V2rayKernelInstance : public QObject
     {
@@ -62,10 +38,10 @@ namespace Qv2ray::core::kernel
             void onAPIDataReady(QString tag, long totalUp, long totalDown);
 
         private:
-            std::unique_ptr<SSRThread> ssrThread;
             APIWorkder *apiWorker;
             QProcess *vProcess;
             bool apiEnabled;
+            ShadowsocksrInstance shadowsocksrInstance;
             QMap<QString, long> transferDataUp;
             QMap<QString, long> transferDataDown;
             QMap<QString, long> transferSpeedUp;
