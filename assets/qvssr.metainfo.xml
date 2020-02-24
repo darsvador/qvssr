@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.github.qvssr</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+  <name>qvssr</name>
+  <summary>A cross-platform V2ray/SS(R) client written in qt. </summary>
+
+  <description>
+    <p>
+        A cross-platform V2ray/SS(R) client written in qt.
+    </p>
+  </description>
+
+  <categories>
+    <category>Network</category>
+  </categories>
+
+  <developer_name>DuckVador</developer_name>
+
+  <launchable type="desktop-id">com.github.qvssr.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>The main window</caption>
+      <image>https://user-images.githubusercontent.com/7822648/72329040-ffcd9180-36ee-11ea-80de-0f30bd59fa22.png</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="2.0.1" date="2019-1-28">
+      <description>
+        <p>
+          New bugfix version.
+        </p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1" />
+  <url type="homepage">https://github.com/DuckVador/qvssr</url>
+  <url type="bugtracker">https://github.com/DuckVador/qvssr/issues</url>
+</component>
