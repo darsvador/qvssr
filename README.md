@@ -37,7 +37,7 @@ I have suffered electron-ssr poor performance for a long time which is based on 
 
 ## Licence
 
-Shadowsocks-deepin is under [GPLv3](LICENSE) licence.
+qvssr is under [GPLv3](LICENSE) licence.
 
 Appreciation to the following open source projects:
 
