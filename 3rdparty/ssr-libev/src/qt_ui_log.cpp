@@ -1,6 +1,7 @@
 #include "qt_ui_log.h"
-#include "src/core/kernel/KernelInteractions.hpp"
+#include "src/core/kernel/SSRThread.hpp"
 void qt_ui_log_info(const char* fmt,...){
+    using namespace Qv2ray::core::kernel;
     auto ptr=dynamic_cast<SSRThread*>(QThread::currentThread());
     if(!ptr) return;
     QString str;
@@ -15,6 +16,7 @@ void qt_ui_log_info(const char* fmt,...){
     emit ptr->onSSRThreadLog(QString{buf.data()});
 }
 void qt_ui_log_error(const char* fmt,...){
+    using namespace Qv2ray::core::kernel;
     auto ptr=dynamic_cast<SSRThread*>(QThread::currentThread()); if(!ptr) return;
     QString str;
     va_list args1;
@@ -30,6 +32,7 @@ void qt_ui_log_error(const char* fmt,...){
 
 void send_traffic_stat(uint64_t tx,uint64_t rx)
 {
+    using namespace Qv2ray::core::kernel;
     auto ptr=dynamic_cast<SSRThread*>(QThread::currentThread()); if(!ptr) return;
     emit ptr->OnDataReady(ptr->getInboundTag(),tx,rx);
 }

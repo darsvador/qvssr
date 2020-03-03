@@ -2,7 +2,8 @@
 #include <QProcess>
 #include "base/Qv2rayBase.hpp"
 #include "APIBackend.hpp"
-#include "ShadowsocksrInstance.h"
+#include "ShadowsocksrInstance.hpp"
+#include "SSRThread.hpp"
 namespace Qv2ray::core::kernel
 {
 

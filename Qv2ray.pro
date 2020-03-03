@@ -109,11 +109,13 @@ Qv2rayAddSource(ui, _, w_SubscriptionManager, cpp, hpp, ui)
 Qv2rayAddSource(ui, widgets, StreamSettingsWidget, cpp, hpp, ui)
 
 SOURCES += $$PWD/src/main.cpp \
+    src/core/kernel/SSRThread.cpp \
     src/core/kernel/ShadowsocksrInstance.cpp \
     src/core/kernel/httpproxy.cpp \
     src/core/kernel/socketstream.cpp
 HEADERS += \
-    src/core/kernel/ShadowsocksrInstance.h \
+    src/core/kernel/SSRThread.hpp \
+    src/core/kernel/ShadowsocksrInstance.hpp \
     src/core/kernel/httpproxy.hpp \
     src/core/kernel/socketstream.hpp
 FORMS +=

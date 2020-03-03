@@ -5,7 +5,7 @@
 #include "KernelInteractions.hpp"
 #include "core/connection/ConnectionIO.hpp"
 #include "core/CoreUtils.hpp"
-#include "ShadowsocksrInstance.h"
+#include "ShadowsocksrInstance.hpp"
 
 namespace Qv2ray::core::kernel
 {
