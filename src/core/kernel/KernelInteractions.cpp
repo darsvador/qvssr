@@ -176,7 +176,7 @@ namespace Qv2ray::core::kernel
                 vProcess->start(GlobalConfig.v2CorePath, QStringList() << "-config" << filePath, QIODevice::ReadWrite | QIODevice::Text);
                 vProcess->waitForStarted();
                 DEBUG(VCORE, "V2ray core started.")
-                        KernelStarted = true;
+                KernelStarted = true;
                 QStringList inboundTags;
 
                 for (auto item : root["inbounds"].toArray()) {

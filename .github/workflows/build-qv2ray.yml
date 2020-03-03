@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         qt_version: [5.12.6, 5.13.2, 5.14.1]
-        platform: [ubuntu-16.04, macos-latest]
+        platform: [ubuntu-16.04, macos-latest, windows-latest]
         arch: [x86, x64]
         exclude:
           - platform: ubuntu-16.04
@@ -28,9 +28,21 @@ jobs:
         run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
       - name: Checking out sources
         uses: actions/checkout@master
+      - name: Install Python 3.7 version
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.7'
+          architecture: ${{ matrix.arch }}
       - name: Restoring submodules
         run: git submodule update --init
 # --------------------------------------------------------
+      - name: Install MSVC compiler
+        if: matrix.platform == 'windows-latest'
+        uses: ilammy/msvc-dev-cmd@v1
+        with: 
+          # 14.1 is for vs2017, 14.2 is vs2019, following the upstream vcpkg build from Qv2ray-deps repo
+          toolset: 14.2
+          arch: ${{ matrix.arch }}
       - name: Installing Qt - ${{ matrix.arch }}
         uses: Qv2ray/install-qt-action@master
         with:
@@ -48,13 +60,26 @@ jobs:
 
       - name: macOS - Install Packages
         if: matrix.platform == 'macos-latest'
-        run: brew install protobuf
+        run: |
+          brew install protobuf
+          brew install grpc
+      
+      - name: Windows - Install Packages
+        if: matrix.platform == 'windows-latest'
+        run: choco install jom -y
 # --------------------------------------------------------
       - name: Cross-platform - Download libraries
         shell: bash
         run: |
          curl -o ./libs/libqvb-linux64.a -L https://github.com/Qv2ray/QvRPCBridge/releases/download/v1.1/libqvb-linux64.a
          curl -o ./libs/libqvb-darwin.a -L https://github.com/Qv2ray/QvRPCBridge/releases/download/v1.1/libqvb-darwin.a
+         curl -o ./libs/Qv2ray-deps-${{ matrix.arch }}-windows.7z -L https://github.com/Qv2ray/Qv2ray-deps/releases/download/release/Qv2ray-deps-${{ matrix.arch }}-windows.7z
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Extract Windows Dependencies
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/extract-7z-action@v1.0
+        with:
+          pathSource: ./libs/Qv2ray-deps-${{ matrix.arch }}-windows.7z
+          pathTarget: ./libs
 # -------------------------------------------------------- Generate MakeFile
       - name: Cross-platform - ${{ matrix.qt_version }} - Generate Dependencies and Makefile
         shell: bash
@@ -70,6 +95,11 @@ jobs:
         run: |
           cd build
           make -j2 release $([ "${{ matrix.platform }}" == "ubuntu-16.04" ] && echo "CC=gcc-7 CXX=g++-7" LINK="g++-7" || echo "")
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Build Qv2ray
+        if: matrix.platform == 'windows-latest'
+        run: |
+          cd build
+          jom
 # -------------------------------------------------------- Deployments
       - name: Linux - ${{ matrix.qt_version }} - Generating AppImage
         if: matrix.platform == 'ubuntu-16.04'
@@ -128,5 +158,39 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: build/Qv2ray.app.tar.gz
           asset_name: Qv2ray.${{ steps.get_version.outputs.VERSION }}.macOS-${{ matrix.arch }}.qt${{ matrix.qt_version }}.tar.gz
+          tag: ${{ github.ref }}
+          overwrite: true
+# ==
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Copying DLLs to build output folders
+        if: matrix.platform == 'windows-latest'
+        run: .\.github\workflows\copy_DLLs.bat
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Running windeployqt
+        if: matrix.platform == 'windows-latest'
+        shell: cmd
+        run: |
+          cd build
+          cd release
+          del *.cpp *.h *.o *.qrc *.qm *.hpp *.obj
+          set VCINSTALLDIR=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\
+          windeployqt ./qv2ray.exe --compiler-runtime --verbose 2
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Create 7z Release
+        if: matrix.platform == 'windows-latest'
+        uses: DuckSoft/create-7z-action@v1.0
+        with:
+          pathSource: ./build/release/
+          pathTarget: ./release.7z
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Uploading artifact
+        if: matrix.platform == 'windows-latest'
+        uses: actions/upload-artifact@master
+        with:
+          name: Qv2ray-${{ github.sha }}.Windows-${{ matrix.arch }}.qt${{ matrix.qt_version }}.7z
+          path: release.7z
+      - name: Win-${{ matrix.arch }} - ${{ matrix.qt_version }} - Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        if: github.event_name == 'release' && matrix.platform == 'windows-latest'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: release.7z
+          asset_name: Qv2ray.${{ steps.get_version.outputs.VERSION }}.Windows-${{ matrix.arch }}.qt${{ matrix.qt_version }}.7z
           tag: ${{ github.ref }}
           overwrite: true
