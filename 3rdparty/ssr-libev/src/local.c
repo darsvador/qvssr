@@ -654,44 +654,6 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
             size_t abuf_len  = abuf->len;
             int sni_detected = 0;
 
-            if (atyp == 1 || atyp == 4) {
-                char *hostname;
-                uint16_t p = ntohs(*(uint16_t *)(abuf->array + abuf->len - 2));
-                int ret    = 0;
-                if (p == http_protocol->default_port)
-                    ret = http_protocol->parse_packet(buf->array + 3 + abuf->len,
-                                                      buf->len - 3 - abuf->len, &hostname);
-                else if (p == tls_protocol->default_port)
-                    ret = tls_protocol->parse_packet(buf->array + 3 + abuf->len,
-                                                     buf->len - 3 - abuf->len, &hostname);
-                if (ret == -1 && buf->len < BUF_SIZE) {
-                    server->stage = STAGE_PARSE;
-                    bfree(abuf);
-                    return;
-                } else if (ret > 0) {
-                    sni_detected = 1;
-
-                    // Reconstruct address buffer
-                    abuf->len                = 0;
-                    abuf->array[abuf->len++] = 3;
-                    abuf->array[abuf->len++] = ret;
-                    memcpy(abuf->array + abuf->len, hostname, ret);
-                    abuf->len += ret;
-                    p          = htons(p);
-                    memcpy(abuf->array + abuf->len, &p, 2);
-                    abuf->len += 2;
-
-                    if (acl || verbose) {
-                        memcpy(host, hostname, ret);
-                        host[ret] = '\0';
-                    }
-
-                    ss_free(hostname);
-                } else {
-                    strncpy(host, ip, sizeof(ip));
-                }
-            }
-
             server->stage = STAGE_STREAM;
 
             buf->len -= (3 + abuf_len);
