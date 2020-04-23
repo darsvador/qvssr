@@ -1,5 +1,4 @@
-# qvssr
-
+# qvssr is no longer maintained. Try https://github.com/Qv2ray/QvPlugin-SSR 
 A cross-platform V2ray/SS(R) client written in qt.
 ![demo](docs/images/demo.png)
 
